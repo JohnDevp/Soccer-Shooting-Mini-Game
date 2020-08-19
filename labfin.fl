@@ -1,0 +1,152 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0110 
+header_name {.h} 
+code_name {.cxx}
+decl {//{\\section{Specification}}} {} 
+
+comment {This is a soccer shoting game. Players need to shoot the ball without
+letting the ball be captured by the goalie so the player could score.
+The goalie will move horizontally from left side of the goal to the
+right. Platers click the screen to shoot the ball. If they miss the
+goal, the player would have to start over again. If they score, 
+there is a rank system to cout their rank level. The goalie will move 
+faster and faster each time the player scores
+} {in_source in_header
+} 
+
+decl {//{\\clearpage\\section{Analysis}}} {} 
+
+comment {There are two buttons on the homepage of this game:the "instructions"
+button and the "start" button. by clicking the "instructions" button,
+it willlead the player to another window which shows instructions of
+the game and how to play it. then they will click the "return" 
+button to return to the home screen. Then they click the "start" 
+button to start the game. The player needs to click on the screen
+to shoot the ball. If they score, their rank level will get higher.
+If the goalie catches the ball. the rank level will drop all the 
+way down to the beginning again
+} {in_source in_header
+} 
+
+decl {//{\\clearpage\\section{Design}}} {} 
+
+comment {{\\begin{alltt}
+- The game logo is on top of the home screen.
+- the two buttons are on the left side of the home screen called
+"press start" and "instructions".
+-when you click on "instructions", it will take you to another 
+window which would show the instructions, and there would be a 
+return button to go back to the home screen.
+-the press start button will take you to another window which the 
+game exists.
+-the game window, would have a soccer ball and a goal, and near the 
+goal would be a zombie goalie running left and right.
+\\end{alltt}
+}} {in_source in_header
+} 
+
+decl {//{\\clearpage\\section{Implementation}}} {} 
+
+decl {\#include <iostream>} {} 
+
+decl {\#include <sstream>} {} 
+
+decl {\#include <iomanip>} {} 
+
+decl {\#include <fstream>} {} 
+
+decl {\#include <sys/unistd.h>} {} 
+
+decl {using namespace std;} {} 
+
+decl {\#include <FL/Fl_GIF_Image.H>} {} 
+
+decl {\#include <FL/Fl_JPEG_Image.H>} {} 
+
+decl {\#include <FL/Fl_PNG_Image.H>} {} 
+
+decl {const int N1 = 10 // goalie2 (intro)} {} 
+
+decl {Fl_GIF_Image* goalie2_images[N1];} {} 
+
+Function {load_images()} {open
+} {
+  code {for(int i=0; i < N1; ++i)
+{
+ std::ostringstream oss; oss << i;
+ std::string s = "goalie2/goalie20"+oss.str()+".gif";
+ goalie2_images[i] = new Fl_GIF_Image(s.c_str());
+}} {}
+} 
+
+Function {goalie2_animate(void*)} {open return_type void
+} {
+  code {static int i = 0;
+Goalie2->image(goalie2_images[i]);
+i = (i + 1) % N1;
+Goalie2->parent()->redraw();
+double t = 1.0/10;
+Fl::repeat_timeout(t,goalie2_animate);} {}
+} 
+
+Function {} {open
+} {
+  Fl_Window IScreen {open
+    xywh {2 176 535 500} type Double hide
+  } {
+    Fl_Text_Display InstructionTD {
+      xywh {25 25 470 350}
+    }
+  }
+  code {ifstream in_file("instructionz.txt");
+string buffer;
+Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+if(in_file.is_open())
+{
+while(getline(in_file,buffer))
+ {
+  buff->append(buffer.c_str());
+  buff->append("\\n");
+ }
+ in_file.close();
+}
+InstructionTD->buffer(buff);} {selected
+  }
+  Fl_Window MainScreen {open
+    xywh {4 225 535 500} type Double color 32 hide
+  } {
+    Fl_Box Goalie2 {
+      xywh {350 350 74 101}
+    }
+    Fl_Box Gamelogo {
+      xywh {125 25 300 180}
+      code0 {o->image(new Fl_PNG_Image("gamelogo/gamelogo.png"));}
+    }
+    Fl_Button Instructions {
+      callback {MainScreen->hide();
+IScreen->show();}
+      xywh {100 350 120 40}
+      code0 {o->image(new Fl_JPEG_Image("instructions/instructions.jpg"));}
+    }
+    Fl_Button Startgame {
+      xywh {100 285 120 40}
+      code0 {o->image(new Fl_JPEG_Image("startgame/startgame.jpg"));}
+    }
+  }
+  code {IScreen->hide();
+load_images();
+Fl::add_timeout(0,goalie2_animate);} {}
+} 
+
+decl {//{\\clearpage\\section{Test}}} {} 
+
+comment {{\\
+For test, we only need to compile the progam using fltk and open it
+to see if any error has occured. if no error occured, we would do
+./labfin to see if it has compiled the way we intended it to. 
+and that the things we want there is displaying. The orginal image
+for some reason is not displaying. so i took a screenshot of it.
+\\includegraphics{design.png}\\\\
+\\includegraphics[scale=0.5]{design2.png}\\\\
+}} {in_source in_header
+} 

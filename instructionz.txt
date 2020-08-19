@@ -1,0 +1,5 @@
+Click the "press start"" button  to start the game. During the game, simply click on the "shoot" button on the screen 
+
+to shoot the ball. The goalie will move horizontally, so try to avoid the goalie and score. Everytime 
+
+you score, the goalie will move faster and faster.
